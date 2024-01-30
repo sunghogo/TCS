@@ -33,7 +33,7 @@ Find the item type that appears in both compartments of each rucksack. What is t
 To begin, get your puzzle input.
 """
 
-# O (n log n)
+# O(m * n log n) where m = # of rucksacks, n = # of items
 def solve_rucksack(rucksacks):
     """Finds duplicate items in both compartments of each rucksack, and returns the sum of the corresponding duplicate priorities.
 
@@ -46,6 +46,7 @@ def solve_rucksack(rucksacks):
     priorities_sum = 0
     
     # Iterate through each rucksack
+    # O(m)
     for rucksack in rucksacks:
         # Slice each compartment
         # Odd number of items will result in 1 more item being in the second compartment

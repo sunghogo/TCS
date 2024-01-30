@@ -92,14 +92,89 @@ def solve_rucksacks_first_half(rucksacks):
     # return priorities running sum
     return priorities_sum
 
+
+# O(m * n log n) where m = # of rucksacks, n = # of items
 def solve_rucksacks_second_half(rucksacks):
-    """Finds duplicate items in both compartments of each rucksack, and returns the sum of the corresponding duplicate priorities.
+    """Finds duplicate item that is representative for each group of 3. and returns the sum of the corresponding duplicate priorities representing each group.
 
     Args:
         rucksacks (List[str]): Array of strings representing each rucksack
         
     Returns:
-        (int): Sum of priorities corresponding to the duplicate item for each group.
+        (int): Sum of priorities corresponding to the duplicate item representing each group.
     """
-    return 1
+    priorities_sum = 0
     
+    # Form groups of 3 from rucksacks data
+    # Working under assumption that all rucksacks form perfect group of 3's
+    # O(m)
+    groups = []
+    for i, rucksack in enumerate(rucksacks):
+        if i % 3 == 0:
+            groups.append([rucksack])
+        else:
+            groups[len(groups) - 1].append(rucksack)
+        
+    # Iterate through each group, and each rucksack in group
+    # O(m)
+    for group in groups:
+        # Access rucksack for each group member
+        # O(1)
+        first_rucksack = group[0]
+        second_rucksack = group[1]
+        third_rucksack = group[2]
+   
+        # Sort each rucksack
+        # O(n log n)
+        sorted_first_rucksack = sorted(first_rucksack)
+        sorted_second_rucksack = sorted(second_rucksack)
+        sorted_third_rucksack = sorted(third_rucksack)
+    
+        # Find duplicate item
+        # Working under assumption that there is exactly 1 duplicate item in all 3 rucksacks
+        # O(n)
+        duplicate = ''
+        first_index = 0
+        second_index = 0
+        third_index = 0
+        pair_found = False
+        false_pairs = []
+        while (not duplicate):
+            first_item = sorted_first_rucksack[first_index]
+            second_item = sorted_second_rucksack[second_index]
+            third_item = sorted_third_rucksack[third_index]
+            # Iterate first two rucksacks to find a matching pair
+            if not pair_found:
+                if first_item == second_item and first_item not in false_pairs:
+                    pair_found = True
+                elif first_item < second_item:
+                    first_index += 1
+                else:
+                    second_index += 1
+            # Iterate through third rucksack to find a matching pair
+            else:
+                if first_item == third_item:
+                    duplicate = first_item
+                    break
+                elif first_item > third_item:
+                    third_index += 1
+                else:
+                    # Reset if no matching pair found
+                    false_pairs.append(first_item)
+                    pair_found = False
+        
+        # Calculate priority
+        # O(1)
+        priority = 0
+        # If duplicate is lower case alphabet
+        if 97 <= ord(duplicate) and ord(duplicate) <= 122:
+            priority = ord(duplicate) - 96
+        # If duplicate is upper case alphabet
+        if 65 <= ord(duplicate) and ord(duplicate) <= 90:
+            priority = ord(duplicate) - 38
+            
+        # Add priority to running sum
+        priorities_sum += priority
+    
+    # return priorities running sum
+    return priorities_sum
